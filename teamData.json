@@ -1,0 +1,22 @@
+{
+	"Tigres" : {
+		"nextMatch" : {
+			"against" : "Necaxa",
+			"stadium" : "Estadio Victoria",
+			"date" : "21/04/18",
+			"status" : "away",
+			"league" : "ligaMx"
+		},
+		"pastMatch" : {
+			"against" : "Cruz Azul",
+			"stadium" : "Estadio Universitario",
+			"date" : "14/04/18",
+			"league" : "ligaMx"
+		} ,
+		"misc" : {
+			"leagueChampionships" : 6,
+			"internationalChampionships" : 0,
+			"rival" : "Monterrey"
+		}
+	}
+}
