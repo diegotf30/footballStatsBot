@@ -1,61 +1,34 @@
 import tweepy
-import time
-from footballData import *
+import json
 from secrets import *
 
-##############################################################################
-auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
-
-#API instance
-api = tweepy.API(auth)
-
-##############################################################################
-
-#Current supported teams by the bot
-supportedTeams = ['Tigres']
-
-#Current supported leagues by the bot
-supportedLeagues = ['ligaMx']
-
-
-#Post weekly the supported teams next match
 def postNextMatches():
-	#List for avoiding the repetition of a match
-	secondaryTeams = []
-	for league in supportedLeagues:
-		for team in supportedTeams:
-			if (time.localtime().tm_wday == 1 and data['leagues'][league]['teams'][team]['nextMatch']['status'] == 'home'):
+    "Posts every team's next match"
+    for league in jsonLeague:
+        for team in jsonTeams:
+            next_match = jsonTeams[team]['nextMatch']  # Helper
+            if next_match['status'] is 'home':
+                opponent = next_match['against']
+                day = next_match['date']
+                place = next_match['stadium']
 
-				api.update_status('{} plays against {} on {} at {}'.format(team.capitalize(), 
-					data['leagues'][league]['teams'][team]['nextMatch']['against'], 
-					data['leagues'][league]['teams'][team]['nextMatch']['date'], 
-					data['leagues'][league]['teams'][team]['nextMatch']['stadium']))
-
-				secondaryTeams.append(teams[team]['nextMatch']['against'])
-
+                tweet_text = f'{team.capitalize()} plays against {opponent} on {day} at {place}'
+                api.update_status(text=tweet_text)
 
 
+# File is executed once per week by Heroku Scheduler
+if __name__ == '__main__':
+    # Constructs Twitter API instance
+    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
+    api = tweepy.API(auth)
 
-###############################################################################
-#Main
-postNextMatches()
-print(data['leagues']['ligaMx']['teams'][0])
+    # Import Team Info.
+    with open('teamData.json') as teams:
+        jsonTeams = json.load(teams)
 
+    # Import League Info.
+    with open('leagueData.json') as leagues:
+        jsonLeague = json.load(leagues)
 
-
-
-
-
-
-
-
-
-
-		
-
-
-
-
-
-
+    postNextMatches()
